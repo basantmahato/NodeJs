@@ -1,6 +1,4 @@
-// middleware/role.js
 
-// Middleware for role-based access control (RBAC)
 const authorize = (...roles) => {
     return (req, res, next) => {
       
