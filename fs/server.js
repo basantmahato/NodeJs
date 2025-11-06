@@ -16,8 +16,18 @@ fs.readFile("./test.txt", "utf-8", (err, result)=>{
 })
 
 
-fs.appendFileSync("./test.txt", "hehehe" )
+fs.appendFile("./test.txt", "hehehe" )
 
-const textData = fs.readFileSync("./test.txt", "utf-8")
 
-console.log(textData)
+// fs.readFile("./test.txt", "utf-8", (err, result)=>{
+
+//     if(err){
+//         console.log(err)
+//     } else{
+//         console.log(result)
+//     }
+    
+// })
+
+
+
