@@ -44,6 +44,21 @@ app.post('/api/users', (req, res) => {
   })
 
 app.patch('/api/users/:id', (req, res) => {
+    const id = Number(req.params.id)
+    const body = req.body;
+    const user = users.find(user => user.id === id);
+
+    if (!user) {
+        return res.status(404).send('User not found');
+    }
+    Object.assign(user, body);
+
+    fs.writeFile('./persons.json', JSON.stringify(users, null, 2), (err) => {
+        if (err) {
+            return res.status(500).send('Error writing to file');
+        }
+        res.send('User updated successfully');
+    });
 
   })
 
