@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Users List</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: Arial, sans-serif; background:#f4f4f4; margin:0; padding:0;">
+
+  <div style="width:80%; margin:30px auto; background:#fff; padding:20px; 
+              box-shadow:0 0 10px rgba(0,0,0,0.1); border-radius:8px;">
+
+    <h1 style="color:#333;">User Directory</h1>
+
+    <!-- Show All Users -->
+    <button id="loadUsers" 
+      style="padding:10px 15px; background:#007bff; color:#fff; border:none; 
+             border-radius:4px; cursor:pointer; margin-top:10px;">
+      Load All Users
+    </button>
+
+    <ul id="usersList" style="list-style:none; padding:0;"></ul>
+
+    <hr>
+
+    <!-- Dynamic Parameter (User by ID) -->
+    <h2 style="color:#333;">Get User by ID</h2>
+
+    <input type="number" id="userIdInput" placeholder="Enter user ID"
+      style="padding:8px; border:1px solid #ccc; border-radius:4px; margin-right:5px;">
+
+    <button id="findUser" 
+      style="padding:10px 15px; background:#28a745; color:#fff; border:none; 
+             border-radius:4px; cursor:pointer;">
+      Find User
+    </button>
+
+    <div id="userDetails" style="margin-top:15px;"></div>
+
+  </div>
+
+  <script>
+    // Fetch all users
+    document.getElementById('loadUsers').addEventListener('click', async () => {
+      const res = await fetch('/api/users');
+      const users = await res.json();
+      const list = document.getElementById('usersList');
+      list.innerHTML = users.map(u => 
+        `<li style="background:#f9f9f9; margin:5px 0; padding:10px; 
+                    border-left:4px solid #007bff;">
+          ${u.id}. ${u.first_name} ${u.last_name}
+        </li>`).join('');
+    });
+
+    // Fetch user by ID
+    document.getElementById('findUser').addEventListener('click', async () => {
+      const id = document.getElementById('userIdInput').value;
+      if (!id) return alert("Please enter an ID");
+
+      const res = await fetch(`/api/users/${id}`);
+      const user = await res.json();
+      const details = document.getElementById('userDetails');
+
+      if (user) {
+        details.innerHTML = `
+          <div style="padding:10px; background:#f9f9f9; border-left:4px solid #28a745;">
+            <p><strong>ID:</strong> ${user.id}</p>
+            <p><strong>Name:</strong> ${user.first_name} ${user.last_name}</p>
+            <p><strong>Email:</strong> ${user.email || "Not available"}</p>
+          </div>
+        `;
+      } else {
+        details.innerHTML = `<p style="color:red;">No user found with that ID.</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
