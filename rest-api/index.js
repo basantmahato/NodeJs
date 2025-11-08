@@ -1,84 +1,154 @@
-const express = require('express')
-const app = express()
-const port = 3000
-const users = require('./persons.json')
-const fs = require('fs')
+const express = require("express");
+const app = express();
+const port = 3000;
+const users = require("./persons.json");
+const fs = require("fs");
+const ejs = require("ejs");
+const path = require("path");
+const logs = require("./logs.json");
 
-app.use(express.json())
+app.set("view engine", "ejs");
+app.set("views", "./views");
 
+app.use(express.json());
 
-// app.use(express.urlencoded({ extended: false }))
-// if data is comming from form data
+app.use(express.urlencoded({ extended: true })); // To read form data
 
-app.get('/users', (req,res)=>{
-
-    const html = `
-    <h1>Users</h1>
-    <ul>
-    ${users.map(users => `<li>${users.first_name} ${users.last_name}</li>`).join('')}
-    </ul>`
-    res.send(html)
-
-})
-
-app.get('/api/users', (req, res) => {
-  res.json(users)
-})
-
-app.get('/api/users/:id', (req, res) => {
-
-    const id = Number(req.params.id)
-    const user = users.find(user => user.id === id);
-    res.send(user)
-})
-
-app.post('/api/users', (req, res) => {
-    const body = req.body;
-    users.push(body);
-    fs.writeFile('./persons.json', JSON.stringify(users),()=>{
-        return res.send( `User added `);
-
-    })
+const LOG_FILE_PATH = path.join(__dirname, 'logs.json');
 
 
-  })
+const simpleLogger = (req, res, next) => {
 
-app.patch('/api/users/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const body = req.body;
-    const user = users.find(user => user.id === id);
+    if (req.path.startsWith('/api/users') || req.path.startsWith('/users') || req.path.startsWith('/usersadmin')) {
+        
+        const timestamp = new Date().toISOString();
+        const method = req.method;
+        const url = req.url;
+        const ip = req.ip;
+        
+        const logEntry = {
+            timestamp: timestamp,
+            method: method,
+            url: url,
+            ip: ip,
+            message: `Request for user resource.`
+        };
+        
+     
+        fs.readFile(LOG_FILE_PATH, 'utf8', (err, data) => {
+            let logs = [];
+            
+            if (!err && data) {
+                try {
+                
+                    logs = JSON.parse(data);
+                } catch (e) {
+                    console.error("Error parsing logs.json:", e);
+                }
+            }
 
-    if (!user) {
-        return res.status(404).send('User not found');
+        
+            logs.push(logEntry);
+
+  
+            fs.writeFile(LOG_FILE_PATH, JSON.stringify(logs, null, 2), (err) => {
+                if (err) {
+                    console.error("Error writing to logs.json:", err);
+                }
+              
+                console.log(`[${timestamp}] LOGGED: ${method} request to ${url}`);
+            });
+        });
     }
-    Object.assign(user, body);
+    
 
-    fs.writeFile('./persons.json', JSON.stringify(users, null, 2), (err) => {
-        if (err) {
-            return res.status(500).send('Error writing to file');
-        }
-        res.send('User updated successfully');
-    });
+    next(); 
+};
 
-  })
+app.use(simpleLogger);
 
-app.delete('/api/users/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const user = users.find(user => user.id === id);
-    const index = users.indexOf(user)
-    users.splice(index,1)
+// ROUTES
+
+app.get("/users", (req, res) => {
+  res.render("./index.ejs", { users: users });
+});
+
+app.get("/usersadmin", (req, res) => {
+  res.render("./usersadmin.ejs");
+});
+
+app.get("/logsdashboard", (req, res) => {
+  res.render("./logsdashboard.ejs",{logs: logs});
+});
 
 
-    fs.writeFile('./persons.json', JSON.stringify(users, null, 2), (err) => {
-        if (err) {
-            return res.status(500).send('Error writing to file');
-        }
-        res.send('User deleted and JSON file updated');
-    });
+// API ROUTES
 
-  })
+app.get("/api/users", (req, res) => {
+  res.json(users);
+});
+
+app.get("/api/users/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const user = users.find((user) => user.id === id);
+  res.send(user);
+});
+
+//POST
+
+app.post("/api/users", (req, res) => {
+  const body = req.body;
+
+  const newId = users.length > 0 
+                ? Math.max(...users.map(u => u.id)) + 1 
+                : 1;
+
+  
+  const newUser = { id: newId, ...body };
+  users.push(newUser);
+  fs.writeFile("./persons.json", JSON.stringify(users), () => {
+    return res.send(`User added `);
+  });
+});
+
+//PATCH
+
+app.patch("/api/users/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const body = req.body;
+  const user = users.find((user) => user.id === id);
+
+  if (!user) {
+    return res.status(404).send("User not found");
+  }
+  Object.assign(user, body);
+
+  fs.writeFile("./persons.json", JSON.stringify(users, null, 2), (err) => {
+    if (err) {
+      return res.status(500).send("Error writing to file");
+    }
+    res.send("User updated successfully");
+  });
+});
+
+//DELETE
+
+app.delete("/api/users/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const user = users.find((user) => user.id === id);
+  const index = users.indexOf(user);
+  users.splice(index, 1);
+
+  fs.writeFile("./persons.json", JSON.stringify(users, null, 2), (err) => {
+    if (err) {
+      return res.status(500).send("Error writing to file");
+    }
+    res.send("User deleted and JSON file updated");
+  });
+});
+
+
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
-
+  console.log(`Example app listening on port ${port}`);
+});
