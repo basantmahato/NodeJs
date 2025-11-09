@@ -6,24 +6,22 @@
   <title>User Administration</title>
   
   <style>
-    /* Global/Body Styles (Shared) */
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0; /* Remove default body margin */
+        margin: 0;
         background-color: #f4f7f6;
         color: #333;
     }
 
-    /* --- Navigation Bar Styles (Shared) --- */
     .main-nav {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #343a40; /* Dark background */
+        background-color: #343a40;
         color: white;
         padding: 10px 40px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        margin-bottom: 30px; /* Space below the navbar */
+        margin-bottom: 30px;
     }
 
     .nav-brand {
@@ -54,29 +52,26 @@
     }
 
     .nav-item:hover {
-        background-color: #007bff; /* Highlight blue on hover */
+        background-color: #007bff;
     }
     
-    /* Icon style */
     .nav-item i {
         margin-right: 8px;
     }
 
-
-    /* --- Form Specific Styles (Unique to Admin Page) --- */
     .forms-container-wrapper {
         display: flex;
         flex-direction: column;
         gap: 20px;
-        align-items: center; /* Center form column */
+        align-items: center;
         margin: 0 auto;
         padding: 20px;
     }
     
     .form-container {
         width: 100%;
-        max-width: 400px; /* Use 400px max-width for consistency */
-        margin: 0; /* Override previous margin */
+        max-width: 400px;
+        margin: 0;
         padding: 25px;
         background-color: #fff;
         border-radius: 10px;
@@ -95,7 +90,6 @@
         color: #333;
     }
     
-    /* Override specific form title colors */
     .form-container .form-title[style*="#ffc107"] { color: #ffc107; }
     .form-container .form-title[style*="#dc3545"] { color: #dc3545; }
 
@@ -138,7 +132,6 @@
         background-color: #218838;
     }
     
-    /* Specific button overrides (for update/delete forms) */
     .form-container #updateForm .add-user-btn { background-color: #ffc107; color: #333; }
     .form-container #updateForm .add-user-btn:hover { background-color: #e0a800; }
     .form-container #deleteForm .add-user-btn { background-color: #dc3545; }
@@ -170,10 +163,7 @@
     <h2 class="form-title">Add New User</h2>
     <form action="/api/users" method="POST">
       <div class="form-field">
-        <input type="text" name="id" placeholder="ID" required>
-      </div>
-      <div class="form-field">
-        <input type="text" name="first_name" placeholder="First Name" required>
+        <input type="text" name="first_name" placeholder="First Name" required> 
       </div>
       <div class="form-field">
         <input type="text" name="last_name" placeholder="Last Name" required>
@@ -192,7 +182,7 @@
   </div>
 
 
-  <div class="form-container-group" style="display: flex; flex-direction: column; gap: 20px;">
+  <div class="form-container-group" style="display: flex; flex-direction: column; gap: 20px;"> 
     
     <div class="form-container">
         <h2 class="form-title" style="color: #ffc107;">Update User Details</h2>
@@ -245,8 +235,11 @@
         </form>
     </div>
 
-  </div> </div> <script>
-    // --- UPDATE (PATCH) LOGIC ---
+  </div> 
+</div> 
+
+<script>
+
     document.getElementById('updateForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const form = e.target;
@@ -283,7 +276,6 @@
         });
     });
 
-    // --- DELETE LOGIC ---
     document.getElementById('deleteForm').addEventListener('submit', function(e) {
         e.preventDefault();
         

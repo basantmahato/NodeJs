@@ -1,16 +1,16 @@
 [
   {
     "id": 1,
-    "first_name": "Darby",
-    "last_name": "Lawland",
-    "email": "dlawland0@who.int",
-    "gender": "Male",
-    "job_title": "Help Desk Technician"
+    "first_name": "Basant",
+    "last_name": "Mahato",
+    "email": "basantkumar72580@gmail.com",
+    "gender": "FEMALE",
+    "job_title": "CA"
   },
   {
     "id": 2,
-    "first_name": "Geneva",
-    "last_name": "Corryer",
+    "first_name": "Chandan",
+    "last_name": "Mahato",
     "email": "gcorryer1@dailymail.co.uk",
     "gender": "Female",
     "job_title": "Automation Specialist II"

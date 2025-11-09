@@ -19,7 +19,7 @@ const LOG_FILE_PATH = path.join(__dirname, 'logs.json');
 
 const simpleLogger = (req, res, next) => {
 
-    if (req.path.startsWith('/api/users') || req.path.startsWith('/users') || req.path.startsWith('/usersadmin')) {
+    if (req.path.startsWith('/api/users') || req.path.startsWith('/users')) {
         
         const timestamp = new Date().toISOString();
         const method = req.method;
@@ -74,7 +74,7 @@ app.get("/users", (req, res) => {
 });
 
 app.get("/usersadmin", (req, res) => {
-  res.render("./usersadmin.ejs");
+  res.render("./usersadmin.ejs",{users: users});
 });
 
 app.get("/logsdashboard", (req, res) => {
@@ -116,11 +116,14 @@ app.post("/api/users", (req, res) => {
 app.patch("/api/users/:id", (req, res) => {
   const id = Number(req.params.id);
   const body = req.body;
+
+  // ✅ Correct comparison
   const user = users.find((user) => user.id === id);
 
   if (!user) {
     return res.status(404).send("User not found");
   }
+
   Object.assign(user, body);
 
   fs.writeFile("./persons.json", JSON.stringify(users, null, 2), (err) => {
@@ -130,6 +133,7 @@ app.patch("/api/users/:id", (req, res) => {
     res.send("User updated successfully");
   });
 });
+
 
 //DELETE
 
@@ -145,6 +149,30 @@ app.delete("/api/users/:id", (req, res) => {
     }
     res.send("User deleted and JSON file updated");
   });
+});
+
+// 404 
+
+
+app.use((req, res, next) => {
+    
+
+  res.status(404);
+
+
+  if (req.accepts('html')) {
+    
+      res.render('404', { url: req.url });
+      return;
+  }
+
+  
+  if (req.accepts('json')) {
+      res.json({ error: 'Not Found', url: req.url });
+      return;
+  }
+
+  res.type('txt').send('404 Not Found');
 });
 
 
