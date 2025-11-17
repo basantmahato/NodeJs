@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 const registerApi = async (req, res) => {
@@ -12,8 +13,20 @@ const registerApi = async (req, res) => {
     } else {
       const user = new User(userData);
       const savedUser = await user.save();
-      res.send({ message: "User registered successfully", data: savedUser });
       console.log({ message: "User registered successfully", data: savedUser });
+
+      // JWT token
+      const token = jwt.sign(
+        { id: savedUser._id, email: savedUser.email },
+        process.env.JWT_SECRET || "SECRET123",
+        { expiresIn: "7d" }
+      );
+
+      res.send({ 
+        message: "User registered successfully", 
+        data: savedUser,
+        token: token
+      });
     }
   } catch (err) {
     res.status(400).send({ error: err.message });
