@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../middlewares/authMiddleware");
-const adminOnly = require("../middlewares/adminOnly");
+const auth = require("../middleware/authMiddleware");
+const adminOnly = require("../middleware/adminOnly");
 
 
 router.get("/dashboard", auth, adminOnly, (req, res) => {
