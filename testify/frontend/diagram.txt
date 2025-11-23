@@ -1,0 +1,37 @@
+                           ┌────────────────────────┐
+                           │        React App       │
+                           │     (index.js / App)   │
+                           └───────────┬────────────┘
+                                       │
+                                       ▼
+                        ┌──────────────────────────┐
+                        │       App.jsx            │
+                        │  Sets up Routes/Layouts  │
+                        └───────────┬──────────────┘
+                                    │
+      ┌─────────────────────────────┼─────────────────────────────┐
+      ▼                             ▼                             ▼
+┌─────────────┐             ┌─────────────┐               ┌─────────────┐
+│ Public Pages │             │ Protected    │               │ Admin Pages │
+│ (Home, Blogs)│             │ User Routes  │               │ Dashboard   │
+└──────┬────────┘            └──────┬────────┘              └─────┬──────┘
+       │ Token?                         │ Valid Token?                │ Valid Admin?
+       ▼                                ▼                              ▼
+┌─────────────┐              ┌──────────────────┐           ┌─────────────────────┐
+│ Auth Pages   │     yes →   │ User Dashboard   │  yes →    │ Admin Dashboard     │
+│ Login/Signup │              │ Profile, Alerts  │           │ User Mgmt, Stats    │
+└──────┬────────┘            └──────────────────┘           └──────────┬──────────┘
+       │ POST /login                    │ GET /user/dashboard             │ GET /admin/stats
+       │ POST /register                 │ GET /content/alerts             │ GET /admin/all-users
+       ▼                                │                                 │
+┌────────────────────────────────────────────────────────────────────────────────────┐
+│                              FRONTEND AUTH FLOW                                    │
+├────────────────────────────────────────────────────────────────────────────────────┤
+│ 1. User submits login/signup                                                       │
+│ 2. React sends request → /api/auth/...                                             │
+│ 3. Server returns JWT                                                              │
+│ 4. React stores JWT → localStorage/sessionStorage                                  │
+│ 5. Axios attaches token in Authorization header                                    │
+│ 6. Protected routes check token → allow/redirect                                   │
+└────────────────────────────────────────────────────────────────────────────────────┘
+
