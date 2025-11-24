@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware"); // Your existing middleware
 const adminMiddleware = require("../middleware/adminMiddleware"); // The new middleware
-const { getBlogs, createBlog } = require("../controllers/blogController");
-const { createAlert, getAlerts } = require("../controllers/alertController");
+const { getBlogs, createBlog , updateBlog, deleteBlog} = require("../controllers/blogController");
+const { createAlert, getAlerts , updateAlert, deleteAlert} = require("../controllers/alertController");
 const { getAdminStats } = require("../controllers/dashboardController");
 
 module.exports = (io) => {
@@ -15,6 +15,10 @@ module.exports = (io) => {
   router.post("/blogs", authMiddleware, adminMiddleware, createBlog);
 
 
+  router.put("/blogs/:id", authMiddleware, adminMiddleware, updateBlog);
+  router.delete("/blogs/:id", authMiddleware, adminMiddleware, deleteBlog);
+
+
   // --- ALERT ROUTES ---
   // User/Admin: Get alert history
   router.get("/alerts", authMiddleware, getAlerts);
@@ -23,6 +27,10 @@ module.exports = (io) => {
   router.post("/alerts", authMiddleware, adminMiddleware, (req, res) => {
     createAlert(req, res, io);
   });
+
+  router.put("/alerts/:id", authMiddleware, adminMiddleware, updateAlert);
+  router.delete("/alerts/:id", authMiddleware, adminMiddleware, deleteAlert);
+
 
 
   // --- ADMIN DASHBOARD ROUTES ---

@@ -27,4 +27,33 @@ const createBlog = async (req, res) => {
   }
 };
 
-module.exports = { getBlogs, createBlog };
+// UPDATE BLOG
+const updateBlog = async (req, res) => {
+  try {
+    const updated = await Blog.findByIdAndUpdate(
+      req.params.id,
+      {
+        title: req.body.title,
+        content: req.body.content,
+      },
+      { new: true }
+    );
+
+    res.send({ message: "Blog updated", blog: updated });
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+};
+
+// DELETE BLOG
+const deleteBlog = async (req, res) => {
+  try {
+    await Blog.findByIdAndDelete(req.params.id);
+    res.send({ message: "Blog deleted" });
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+};
+
+
+module.exports = { getBlogs, createBlog , updateBlog, deleteBlog};

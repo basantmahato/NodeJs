@@ -1,15 +1,19 @@
 const express = require("express");
 const http = require("http"); // Required for Socket.io
 const { Server } = require("socket.io"); // Required for Socket.io
+
 const connectDB = require("./db/db");
 const cors = require("cors");
 require('dotenv').config();
+
 
 // Import Routes
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes"); // Assuming this exists based on your file list
 const adminRoutes = require("./routes/adminRoutes"); // Assuming this exists
 const contentRoutes = require("./routes/contentRoutes"); // NEW
+const leaderboardRoutes = require("./routes/leaderboardRoutes");
+
 
 const app = express();
 const server = http.createServer(app); // Wrap express app
@@ -34,6 +38,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use("/api/mcq", require("./routes/mcqRoutes"));
+app.use("/api/leaderboard", leaderboardRoutes);
+
+
 // Pass 'io' to content routes so we can emit alerts inside the controller
 app.use('/api/content', contentRoutes(io)); 
 

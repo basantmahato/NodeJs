@@ -32,4 +32,38 @@ const getAlerts = async (req, res) => {
   }
 };
 
-module.exports = { createAlert, getAlerts };
+// UPDATE ALERT
+const updateAlert = async (req, res) => {
+  try {
+    const updated = await Alert.findByIdAndUpdate(
+      req.params.id,
+      {
+        message: req.body.message,
+        type: req.body.type,
+      },
+      { new: true }
+    );
+
+    res.send({ message: "Alert updated", alert: updated });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
+
+// DELETE ALERT
+const deleteAlert = async (req, res) => {
+  try {
+    await Alert.findByIdAndDelete(req.params.id);
+    res.send({ message: "Alert deleted" });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
+
+
+module.exports = {
+  createAlert,
+  getAlerts,
+  updateAlert,
+  deleteAlert
+};
